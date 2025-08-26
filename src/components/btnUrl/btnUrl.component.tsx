@@ -31,10 +31,10 @@ export default function BtnUrl({ bgColor, url, icon, name, pdd, margin }: Props)
         className={`
             ${bgColor} border border-white 
             ${pdd} rounded text-white hover:bg-white 
-            hover:text-black ${margin}
+            hover:text-black ${margin} 
         `}
         >
-            {icon} {name}
+            {name}
         </Link>
     )
 }
