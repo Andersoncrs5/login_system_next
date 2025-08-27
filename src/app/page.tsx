@@ -1,7 +1,6 @@
 'use client'
 
 import BtnUrl from "@/components/btnUrl/btnUrl.component";
-import Image from "next/image";
 
 export default function Home() {
   return (
