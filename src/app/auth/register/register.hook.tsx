@@ -1,13 +1,16 @@
 import RegisterDTO from "@/model/dtos/RegisterDTO.dto";
 import api from "@/services/api";
+import LocalStorageService from "@/services/storage/localStorage.storage";
 import { BgStyleType } from "@/types/bg.type";
 import { BorderStyleType } from "@/types/border.type";
 import { TextStyleType } from "@/types/text.type";
 import ResponseBody from "@/utils/ResponseBody.response";
 import { AxiosError, AxiosResponse } from "axios";
-import { useState } from "react";
+import router from "next/router";
+import { useEffect, useState } from "react";
 
 export function UseRegister() {
+    const localStorageService = new LocalStorageService()
     const timeMsg = 6000;
 
     const [name, setName] = useState<string>('');
@@ -25,6 +28,18 @@ export function UseRegister() {
 
     const [errorForm, setErrorForm] = useState<boolean>(false);
     const [msgErrorForm, setMsgErrorForm] = useState<string[]>([]);
+
+    useEffect(() => {
+        checkLog()
+    },[])
+
+    function checkLog() {
+        const token = localStorageService.getToken()
+
+        if (token != null) {
+            router.push("/user/profile")
+        }
+    }
 
     async function HandleSubmit(e: React.FormEvent) {
         e.preventDefault()
