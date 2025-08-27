@@ -1,36 +1,25 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simple Auth System (Next.js + React)
 
-## Getting Started
+A minimal authentication and user CRUD frontend built with **Next.js** and **React**, consuming an ASP.NET Core API. It uses **JWT** for authentication, **Axios** for HTTP, and basic **SOLID-inspired** separation (services, hooks, UI). Includes simple client-side **validation** and protected routes.
 
-First, run the development server:
+> Backend API (consumer):
+> https://github.com/Andersoncrs5/SignInApi-AspCore-
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **JWT-based Auth**: login, logout, token storage, auth-guarded pages
+- **User CRUD**: fetch profile, update, delete
+- **Validation**: basic client-side field checks
+- **SOLID-ish structure**: UI (components) ↔ hooks (logic) ↔ services (API)
+- **Next.js + React** UI, **Axios** for requests, **Redux Toolkit** for state
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Next.js** (App Router)
+- **React**
+- **Redux Toolkit** (optional: redux-persist)
+- **Axios**
+- **Tailwind CSS** (if enabled)
+- **TypeScript**
