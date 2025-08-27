@@ -1,9 +1,11 @@
+'use client'
+
 import Alert from "@/components/alert/alert.component"
 import { UseProfile } from "./profile.hook"
 import Btn from "@/components/btn/btn.component"
 import { LuLogOut } from "react-icons/lu";
 import { MdDelete } from "react-icons/md";
-
+import { GrUpdate } from "react-icons/gr";
 
 export default function Profile() {
     const {
@@ -15,8 +17,10 @@ export default function Profile() {
         msg,
         user,
         logoutUser,
-        deletUser
-    } = UseProfile()
+        deletUser,
+        updateUser
+    } = UseProfile();
+
     return (
         <>
             {alert && <Alert msg={msg} bgStyle={bgColorAlert} textStyle={colorTextAlert} border={colorBorderAlert} /> }
@@ -33,18 +37,24 @@ export default function Profile() {
                             <h4>Email: {user.email}</h4>
                             <h4>phoneNumber: {user.phoneNumber}</h4>
                         </div>
-                        <div>
+                        <div className={"flex flex-row mt-2"} >
                             <Btn 
-                                padding={"p-1"} 
+                                padding={"p-2"} 
+                                margin="mr-1"
                                 icon={<LuLogOut />}
-                                fn={() => logoutUser()} 
+                                funcBtn={logoutUser} 
                             />
                             <Btn 
-                                padding={"p-1"} 
+                                padding={"p-2"} 
+                                margin="mr-1"
                                 icon={ <MdDelete /> }
-                                fn={() => deletUser()}                                
+                                funcBtn={deletUser}                                
                             />
-
+                            <Btn 
+                                padding={"p-2"} 
+                                icon={ <GrUpdate /> }
+                                funcBtn={updateUser}                                
+                            />
                         </div>
                         
                     </div>
