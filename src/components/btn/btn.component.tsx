@@ -13,11 +13,11 @@ interface Props {
     icon?: ReactNode
     padding: Padding
     margin?: string
-    fn: () => any
+    funcBtn: () => any
     disabled?: boolean
 }
 
-export default function Btn({ title, icon, padding, margin, fn, disabled }:Props) {
+export default function Btn({ title, icon, padding, margin, funcBtn: fn, disabled }:Props) {
     return (
         <button
             className={`
