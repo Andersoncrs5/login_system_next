@@ -2,19 +2,21 @@
 
 import LoginDTO from "@/model/dtos/LoginDTO.dto";
 import api from "@/services/api";
-import { loginSuccess } from "@/store/authSlice";
+import LocalStorageService from "@/services/storage/localStorage.storage";
 import { BgStyleType } from "@/types/bg.type";
 import { BorderStyleType } from "@/types/border.type";
 import { TextStyleType } from "@/types/text.type";
 import ResponseBody from "@/utils/ResponseBody.response";
 import ResponseToken from "@/utils/ResponseToken.response";
 import { AxiosError, AxiosResponse } from "axios";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function UseLogin() {
-    const dispatch = useDispatch()
+    const localStorageService = new LocalStorageService()
+
     const timeMsg = 6000;
+    const router = useRouter()
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
@@ -30,6 +32,18 @@ export default function UseLogin() {
 
     const [errorForm, setErrorForm] = useState<boolean>(false);
     const [msgErrorForm, setMsgErrorForm] = useState<string[]>([]);
+
+    useEffect(() => {
+        checkLog()
+    },[])
+
+    function checkLog() {
+        const token = localStorageService.getToken()
+
+        if (token != null) {
+            router.push("/user/profile")
+        }
+    }
 
     async function HandleSubmit(e: React.FormEvent) {
         e.preventDefault()
@@ -48,11 +62,10 @@ export default function UseLogin() {
                     "Welcome again"
                 )
 
-                dispatch(loginSuccess({
-                    token: response.data.token,
-                    refreshToken: response.data.refreshToken,
-                    expirationToken: response.data.expirationToken
-                }))
+                localStorageService.setTokens(response.data)
+
+                router.push("/user/profile")
+                return
             }
 
         } catch(e: any) {
