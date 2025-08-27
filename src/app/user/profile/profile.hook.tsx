@@ -2,8 +2,7 @@
 
 import UserDTO from "@/model/dtos/user/UserDTO.dto"
 import api from "@/services/api"
-import { logout } from "@/store/authSlice"
-import { RootState } from "@/store/store"
+import LocalStorageService from "@/services/storage/localStorage.storage"
 import { BgStyleType } from "@/types/bg.type"
 import { BorderStyleType } from "@/types/border.type"
 import { TextStyleType } from "@/types/text.type"
@@ -11,16 +10,15 @@ import ResponseBody from "@/utils/ResponseBody.response"
 import { AxiosError, AxiosResponse } from "axios"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
 
 export function UseProfile() {
-    const dispatch = useDispatch()
+    const localStorageService = new LocalStorageService()
     const timeMsg = 6000
+    const urlUser = '/v1/User'
 
     const router = useRouter()
     const [load, setLoad] = useState<boolean>(true)
-    const token = useSelector((state: RootState) => state.auth.token) as string | null
-
+    
     const [user, setUser] = useState<UserDTO>({
         id: '', email: '', links: [], phoneNumber: '', userName: ''
     })
@@ -33,24 +31,20 @@ export function UseProfile() {
     const [colorBorderAlert, setColorBorderAlert] = useState<BorderStyleType>("border-white");
     
     useEffect(() => {
-        checkToken()
         getUser()
-    }, [token])
-
-    function checkToken() {
-        if (token == null) {
-            router.push('/')
-        }
-    }
+    }, [])
 
     async function deletUser() {
         try {
-            const response: AxiosResponse<ResponseBody<string>> = await api.delete("/v1/User/delete", {
+            const token = localStorageService.getToken()
+
+            if (token == null) { router.push('/'); return }
+
+            const response: AxiosResponse<ResponseBody<string>> = await api.delete(urlUser+"/delete", {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
             if (response.status === 200) {
-                dispatch(logout())
 
                 showAlert(
                     "bg-transparent",
@@ -59,7 +53,9 @@ export function UseProfile() {
                     "Bye Bye"
                 )
 
+                localStorageService.clearAll()
                 router.push("/")
+                return
             }
 
         } catch(e: any) {
@@ -102,14 +98,34 @@ export function UseProfile() {
         }
     }
 
+    function updateUser() {
+        router.push("/user/update")
+    }
+
     async function logoutUser() {
+        showAlert(
+            "bg-transparent",
+            "text-green-500",
+            "border-green-500",
+            "See you later"
+        )
+
+        localStorageService.clearAll()
+        router.push("/")
+        return
+        /*
         try {
-            const response = await api.post("/v1/Auth/revoke/"+user.email, {
+            const token = localStorageService.getToken()
+
+            if (token == null) { router.push('/'); return }
+
+            const response = await api.get(`/v1/Auth/revoke/${user.email}`, {
                 headers: { Authorization: `Bearer ${token}` }
             })
 
-            if (response.status == 200) {
-                dispatch(logout())
+            console.log(response)
+
+            if (response.status === 200) {
 
                 showAlert(
                     "bg-transparent",
@@ -118,19 +134,22 @@ export function UseProfile() {
                     "See you later"
                 )
 
+                localStorageService.clearAll()
                 router.push("/")
+                return
             }
 
 
         } catch(e: any) {
             const err = e as AxiosError
 
+            console.log(err)
             if (err.response?.status === 404) {
                 const body = err.response.data as ResponseBody<string>
 
                 showAlert(
                     "bg-transparent",
-                    "text-white",
+                    "text-yellow-500",
                     "border-yellow-500",
                     body.message
                 )
@@ -149,15 +168,20 @@ export function UseProfile() {
 
                 router.push("/")
             }
-        }
-
+        } */
     }
 
     async function getUser() {
         try {
-            const response: AxiosResponse<ResponseBody<UserDTO>, any> = await api.get('/v1/api/User/me', {
+            const token = localStorageService.getToken()
+
+            if (token == null) { router.push('/'); return }
+
+            const response: AxiosResponse<ResponseBody<UserDTO>, any> = await api.get(urlUser+'/me', {
                 headers: { Authorization: `Bearer ${token}` }
             })
+
+            console.log(response)
 
             if (response.status == 200) {
                 setUser(response.data.body as UserDTO)
@@ -167,6 +191,8 @@ export function UseProfile() {
         } catch(e: any) {
             const err = e as AxiosError
             
+            console.error(err)
+
             if (err.response?.status === 401) {
                 showAlert(
                     "bg-transparent",
@@ -175,6 +201,7 @@ export function UseProfile() {
                     "You are not logged!"
                 )
                 router.push("/")
+                return
             }
 
             if (err.response?.status === 404) {
@@ -188,6 +215,7 @@ export function UseProfile() {
                 )
 
                 router.push("/")
+                return
             }
 
             if (err.response?.status && err.response?.status >= 500 &&  err.response?.status <= 599) {
@@ -200,6 +228,7 @@ export function UseProfile() {
                 )
 
                 router.push("/")
+                return
             }
 
         } 
@@ -230,6 +259,7 @@ export function UseProfile() {
         colorTextAlert,
         colorBorderAlert,
         logoutUser,
-        deletUser
+        deletUser,
+        updateUser
     }
 }
